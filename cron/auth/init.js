@@ -1,5 +1,7 @@
-import { get_connection, apply_migrations } from '@src/auth/database.js';
+import { getConnection } from '@src/auth/database.js';
+import { applyMigrations } from '@src/database/migrations.js';
+
 export default async function () {
-    const db = get_connection();
-    await apply_migrations(db);
+    const db = getConnection();
+    await applyMigrations(db, 'auth/migrations');
 }

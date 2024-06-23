@@ -7,10 +7,26 @@ import {
 import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
 import { FOLDER_GEN_SERVER } from '@wyvr/generator/src/constants/folder.js';
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
+import { basename, dirname, join } from 'node:path';
+import { run, getAll } from '@src/database/database.js';
+import { readFileSync } from 'node:fs';
 
-import { basename } from 'node:path';
+export async function applyMigrations(db, folder) {
+    const files = getMigrationFiles(folder);
+    if (!filled_array(files)) {
+        logger.warning('no migrations found in', folder);
+        return [];
+    }
+    const migrations = getAppliedMigrations(db);
+    const files_to_apply = getFilesToApply(files, migrations);
+    const applied_migrations = await applyFiles(db, files_to_apply);
+    if (applied_migrations.length === 0) {
+        logger.warning('no migrations applied');
+    }
+    return applied_migrations;
+}
 
-export function get_migration_files(folder) {
+export function getMigrationFiles(folder) {
     if (!filled_string(folder)) {
         return [];
     }
@@ -22,19 +38,18 @@ export function get_migration_files(folder) {
     return files;
 }
 
-export function get_applied_migrations(db) {
+export function getAppliedMigrations(db) {
     if (!db) {
         return [];
     }
     try {
-        const stmt = db.prepare('SELECT * FROM migrations');
-        return stmt.all();
+        return getAll(db, 'SELECT * FROM migrations');
     } catch (_) {
         return [];
     }
 }
 
-export function get_files_to_apply(files, migrations) {
+export function getFilesToApply(files, migrations) {
     const migrations_names = migrations.map((row) => row.name).filter(Boolean);
     return files
         .map((file) => {
@@ -49,29 +64,43 @@ export function get_files_to_apply(files, migrations) {
         })
         .filter(Boolean);
 }
-export async function apply_files(db, files) {
-    const stmt = db.prepare(`CREATE TABLE IF NOT EXISTS migrations (
-    name TEXT,
-    applied DATETIME DEFAULT (CURRENT_DATETIME)
-);`);
-    stmt.run();
-    console.log('migrations', files);
+export async function applyFiles(db, files) {
+    run(db, get_query('./queries/migrations.sql'));
+    if (!filled_array(files)) {
+        return [];
+    }
+    const applied_migrations = [];
     for (const file of files) {
         const name = basename(file, '.js');
-        const module = await import(file);
-        console.log(module);
-        const fn = module?.default;
+        let fn;
+        try {
+            const module = await import(file);
+            fn = module?.default;
+        } catch (e) {
+            logger.error(get_error_message(e, file, 'migration'));
+            continue;
+        }
         if (!is_func(fn)) {
             continue;
         }
         try {
             fn(db);
+            run(db, get_query('./queries/migration_insert.sql'), {
+                name,
+            });
         } catch (e) {
             logger.error(get_error_message(e, file, 'migration'));
             continue;
         }
-        const stmt = db.prepare('INSERT INTO migrations (name) VALUES (?)');
-        stmt.run(name);
-        logger.info(`Applied migration ${name}`);
+        logger.info('applied migration', name);
+        applied_migrations.push(name);
     }
+    return applied_migrations;
+}
+
+function get_query(path) {
+    return readFileSync(
+        join(dirname(import.meta.url).replace('file:', ''), path),
+        'utf-8'
+    );
 }

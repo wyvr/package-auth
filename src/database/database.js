@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 
-export function create_connection(file) {
+export function createConnection(file) {
     if (typeof file !== 'string' || file.split('.').pop() !== 'db') {
         return undefined;
     }
@@ -16,3 +16,23 @@ export function create_connection(file) {
     return db;
 }
 
+export function run(db, sql, data) {
+    return execute('run', db, sql, data);
+}
+export function getFirst(db, sql, data) {
+    return execute('get', db, sql, data);
+}
+export function getAll(db, sql, data) {
+    return execute('all', db, sql, data);
+}
+
+function execute(type, db, sql, data) {
+    const stmt = db.prepare(sql);
+    if (stmt[type] === undefined) {
+        return undefined;
+    }
+    if (data === undefined) {
+        return stmt[type]();
+    }
+    return stmt[type](data);
+}
