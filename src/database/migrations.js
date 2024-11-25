@@ -1,12 +1,12 @@
-import { collect_files } from '@wyvr/generator/src/utils/file.js';
+import { collect_files } from 'wyvr/src/utils/file.js';
 import {
     filled_array,
     filled_string,
     is_func,
-} from '@wyvr/generator/src/utils/validate.js';
-import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
-import { FOLDER_GEN_SERVER } from '@wyvr/generator/src/constants/folder.js';
-import { logger, get_error_message } from '@wyvr/generator/universal.js';
+} from 'wyvr/src/utils/validate.js';
+import { Cwd } from 'wyvr/src/vars/cwd.js';
+import { FOLDER_GEN_SERVER } from 'wyvr/src/constants/folder.js';
+import { logger, get_error_message } from 'wyvr/universal.js';
 import { basename, dirname, join } from 'node:path';
 import { run, getAll } from '@src/database/database.js';
 import { readFileSync } from 'node:fs';

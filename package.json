@@ -1,0 +1,15 @@
+{
+    "name": "@wyvr/package-auth",
+    "version": "0.0.0",
+    "description": "Simple auth package ",
+    "main": "wyvr.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "type": "module",
+    "devDependencies": {
+        "@biomejs/biome": "1.8.2"
+    }
+}
