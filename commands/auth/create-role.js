@@ -1,4 +1,4 @@
-import { prompt_input, add_prompts, execute_prompts, validate } from 'wyvr/commands.js';
+import { execute_flag_prompts } from 'wyvr/commands.js';
 import { logger } from 'wyvr/universal.js';
 
 export const meta = {
@@ -10,25 +10,10 @@ export const meta = {
 };
 
 export async function execute(context) {
-    const flags = context?.cli?.flags;
-    const fields = ['role', 'name'];
-    const names = ['Role', 'Name'];
-
-    let result = {};
-
-    for (const [i, field] of fields.entries()) {
-        const validate_fn = validate.required;
-        const init_value = flags?.[field];
-        if (init_value && validate_fn(init_value) === true) {
-            logger.info(names[i], init_value);
-            result[field] = init_value;
-        } else {
-            add_prompts(
-                prompt_input(field, names[i], null, validate_fn)
-            )
-        }
-    }
-    result = await execute_prompts(result);
+    const result = await execute_flag_prompts(context?.cli?.flags, [
+        { key: 'role', name: 'Role', type: 'input', required: true },
+        { key: 'name', name: 'Name', type: 'input', required: true }
+    ]);
 
     // TODO create role in db
 
