@@ -1,4 +1,4 @@
-import { collect_files } from 'wyvr/src/utils/file.js';
+import { collect_files, read } from 'wyvr/src/utils/file.js';
 import {
     filled_array,
     filled_string,
@@ -7,7 +7,7 @@ import {
 import { Cwd } from 'wyvr/src/vars/cwd.js';
 import { FOLDER_GEN_SERVER } from 'wyvr/src/constants/folder.js';
 import { logger, get_error_message } from 'wyvr/universal.js';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, extname, join } from 'node:path';
 import { run, getAll } from '$src/database/database.js';
 import { readFileSync } from 'node:fs';
 
@@ -18,8 +18,8 @@ export async function applyMigrations(db, folder) {
         return [];
     }
     const migrations = getAppliedMigrations(db);
-    const files_to_apply = getFilesToApply(files, migrations);
-    const applied_migrations = await applyFiles(db, files_to_apply);
+    const files_to_apply = getFilesToApply(files, migrations, folder);
+    const applied_migrations = await applyFiles(db, files_to_apply, folder);
     if (applied_migrations.length === 0) {
         logger.warning('no migrations applied');
     }
@@ -31,7 +31,8 @@ export function getMigrationFiles(folder) {
         return [];
     }
     const target = Cwd.get(FOLDER_GEN_SERVER, folder);
-    const files = collect_files(target, '.js');
+    const files = collect_files(target)
+        .filter((file) => file.endsWith('.js') || file.endsWith('.sql'));
     if (!filled_array(files)) {
         return [];
     }
@@ -49,51 +50,64 @@ export function getAppliedMigrations(db) {
     }
 }
 
-export function getFilesToApply(files, migrations) {
-    const migrations_names = migrations.map((row) => row.name).filter(Boolean);
+export function getFilesToApply(files, migrations, folder) {
+    const migrations_files = migrations.map((row) => row.file).filter(Boolean);
     return files
         .map((file) => {
             if (!filled_string(file)) {
                 return undefined;
             }
-            const name = basename(file, '.js');
-            if (!migrations_names.includes(name)) {
+            const rel_file = file.replace(Cwd.get(FOLDER_GEN_SERVER, folder), '');
+            if (!migrations_files.includes(rel_file)) {
                 return file;
             }
             return undefined;
         })
         .filter(Boolean);
 }
-export async function applyFiles(db, files) {
+export async function applyFiles(db, files, folder) {
     run(db, get_query('./queries/migrations.sql'));
     if (!filled_array(files)) {
         return [];
     }
     const applied_migrations = [];
+    const target = Cwd.get(FOLDER_GEN_SERVER, folder);
+
     for (const file of files) {
-        const name = basename(file, '.js');
-        let fn;
+        let applied = false;
         try {
-            const module = await import(file);
-            fn = module?.default;
-        } catch (e) {
-            logger.error(get_error_message(e, file, 'migration'));
-            continue;
-        }
-        if (!is_func(fn)) {
-            continue;
-        }
-        try {
-            fn(db);
+            switch (extname(file)) {
+                case '.js': {
+                    const module = await import(file);
+                    const fn = module?.default;
+                    if (!is_func(fn)) {
+                        continue;
+                    }
+                    fn(db);
+                    applied = true;
+                    break;
+                }
+                case '.sql': {
+                    const query = read(file);
+                    if(!query) {
+                        continue;
+                    }
+                    run(db, query);
+                    applied = true;
+                    break;
+                }
+            }
             run(db, get_query('./queries/migration_insert.sql'), {
-                name,
+                file: file.replace(target, ''),
             });
         } catch (e) {
             logger.error(get_error_message(e, file, 'migration'));
             continue;
         }
-        logger.info('applied migration', name);
-        applied_migrations.push(name);
+        if (applied) {
+            logger.info('applied migration', file);
+            applied_migrations.push(file);
+        }
     }
     return applied_migrations;
 }

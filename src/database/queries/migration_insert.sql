@@ -1,4 +1,4 @@
 INSERT INTO
-    migrations (name)
+    migrations (file)
 VALUES
-    (@name)
+    (@file)
