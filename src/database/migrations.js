@@ -8,7 +8,7 @@ import { Cwd } from 'wyvr/src/vars/cwd.js';
 import { FOLDER_GEN_SERVER } from 'wyvr/src/constants/folder.js';
 import { logger, get_error_message } from 'wyvr/universal.js';
 import { basename, dirname, join } from 'node:path';
-import { run, getAll } from '@src/database/database.js';
+import { run, getAll } from '$src/database/database.js';
 import { readFileSync } from 'node:fs';
 
 export async function applyMigrations(db, folder) {
