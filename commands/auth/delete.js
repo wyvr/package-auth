@@ -1,19 +1,17 @@
-import { execute_flag_prompts } from 'wyvr/commands.js';
+import { promptUser } from '$src/auth/commands/prompt_user.js';
+import { deleteUserByName } from '$src/auth/resource/user.js';
 import { logger } from 'wyvr/universal.js';
 
 export const meta = {
     desc: 'Delete a user',
     flags: [
-        { key: 'user', desc: 'Username' },
+        { key: 'name', desc: 'Username' },
     ],
 };
 
 export async function execute(context) {
-    const result = await execute_flag_prompts(context?.cli?.flags, [
-        { key: 'user', name: 'Username', type: 'input', required: true },
-    ]);
+    const user = await promptUser(context);
 
-    // TODO delete user from db
-
-    console.log('result', result)
+    deleteUserByName(user.name);
+    logger.success('User deleted');
 }

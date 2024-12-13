@@ -26,6 +26,11 @@ export function getAll(db, sql, data) {
     return execute('all', db, sql, data);
 }
 
+export function getDate(timestamp) {
+    const date = timestamp ? new Date(timestamp) : new Date();
+    return date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
+}
+
 function execute(type, db, sql, data) {
     const stmt = db.prepare(sql);
     if (stmt[type] === undefined) {

@@ -66,7 +66,7 @@ export function getFilesToApply(files, migrations, folder) {
         .filter(Boolean);
 }
 export async function applyFiles(db, files, folder) {
-    run(db, get_query('./queries/migrations.sql'));
+    run(db, get_query('./query/migrations.sql'));
     if (!filled_array(files)) {
         return [];
     }
@@ -97,7 +97,7 @@ export async function applyFiles(db, files, folder) {
                     break;
                 }
             }
-            run(db, get_query('./queries/migration_insert.sql'), {
+            run(db, get_query('./query/migration_insert.sql'), {
                 file: file.replace(target, ''),
             });
         } catch (e) {

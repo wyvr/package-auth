@@ -1,4 +1,0 @@
-INSERT INTO
-    migrations (file)
-VALUES
-    (@file)

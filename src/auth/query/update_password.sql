@@ -1,0 +1,1 @@
+UPDATE user SET hash = :hash, salt = :salt, updated = :updated WHERE name = :name;

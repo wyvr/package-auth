@@ -1,19 +1,39 @@
+import { promptUser } from '$src/auth/commands/prompt_user.js';
+import { updateUserByName } from '$src/auth/resource/user.js';
+import { getDate } from '$src/database/database.js';
 import { execute_flag_prompts } from 'wyvr/commands.js';
 import { logger } from 'wyvr/universal.js';
 
 export const meta = {
     desc: 'Lock a user',
     flags: [
-        { key: 'user', desc: 'Username' },
+        { key: 'name', desc: 'Username' },
+        { key: 'duration', desc: 'Duration in minutes' },
     ],
 };
 
 export async function execute(context) {
-    const result = await execute_flag_prompts(context?.cli?.flags, [
-        { key: 'user', name: 'Username', type: 'input', required: true },
-    ]);
+    const user = await promptUser(context);
+    let duration;
+    let flags = context?.cli?.flags;
+    flags = context?.cli?.flags;
+    while (!duration) {
+        // prompt for id
+        const duration_result = await execute_flag_prompts(flags, [
+            { key: 'duration', name: 'Duration in minutes', type: 'number', default: 60, required: true },
+        ]);
+        flags = {};
 
-    // TODO lock user in db
+        if (duration_result?.duration) {
+            duration = duration_result.duration;
+        }
+    }
 
-    console.log('result', result)
+    // update user in db
+    const update_result = updateUserByName(user.name, { locked_until: getDate(new Date().getTime() + (Number.parseFloat(duration) * 60 * 1000)) });
+    if (!update_result) {
+        logger.error('Failed to lock user');
+        return;
+    }
+    logger.success('User locked');
 }
