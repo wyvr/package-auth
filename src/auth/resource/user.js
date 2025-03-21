@@ -69,6 +69,9 @@ export function deleteUserByName(name) {
     if (!filled_string(name)) {
         return null;
     }
+
+    deleteUserLogins(name);
+    
     const query = read(Cwd.get(FOLDER_GEN_SERVER, 'auth/query/delete_user_by_name.sql'));
     if (!query) {
         return false;
