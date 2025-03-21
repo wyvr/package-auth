@@ -26,7 +26,7 @@
             "lineWidth": 180,
             "lineEnding": "lf",
             "quoteStyle": "single",
-            "trailingComma": "none"
+            "trailingCommas": "none"
         },
         "globals": ["isServer", "isClient", "isRequest", "__"]
     }
