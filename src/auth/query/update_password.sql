@@ -1,1 +1,1 @@
-UPDATE user SET hash = :hash, salt = :salt, updated = :updated WHERE name = :name;
+UPDATE user SET hash = $hash, salt = $salt, updated = $updated WHERE name = $name;
