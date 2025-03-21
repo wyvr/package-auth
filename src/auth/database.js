@@ -13,3 +13,7 @@ export function getConnection() {
     connection = createConnection(path);
     return connection;
 }
+
+export function getPath() {
+    return path;
+}

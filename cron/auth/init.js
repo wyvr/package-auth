@@ -1,7 +1,8 @@
-import { getConnection } from '$src/auth/database.js';
-import { applyMigrations } from '$src/database/migrations.js';
+import { getConnection, getPath } from '$src/auth/database.js';
+import { Migrations } from 'wyvr/storage.js';
 
 export default async function () {
     const db = getConnection();
-    await applyMigrations(db, 'auth/migrations');
+    const migrations = new Migrations(getPath(), 'auth/migrations');
+    await migrations.apply();
 }
