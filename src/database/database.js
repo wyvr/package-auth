@@ -28,7 +28,10 @@ export function getAll(db, sql, data) {
 
 export function getDate(timestamp) {
     const date = timestamp ? new Date(timestamp) : new Date();
-    return date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
+    return date
+        .toISOString()
+        .replace('T', ' ')
+        .replace(/\.\d{3}Z$/, '');
 }
 
 function execute(type, db, sql, data) {

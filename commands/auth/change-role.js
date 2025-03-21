@@ -9,15 +9,13 @@ export const meta = {
     flags: [
         { key: 'name', desc: 'Username' },
         { key: 'role', desc: 'Role' }
-    ],
+    ]
 };
 
 export async function execute(context) {
     const user = await promptUser(context);
 
-    const result = await execute_flag_prompts(context?.cli?.flags, [
-        { key: 'role', name: 'Role', type: 'list', required: true, list: getRolesAsPrompt() }
-    ]);
+    const result = await execute_flag_prompts(context?.cli?.flags, [{ key: 'role', name: 'Role', type: 'list', required: true, list: getRolesAsPrompt() }]);
 
     updateUserByName(user.name, { role: result.role });
     logger.success('Role has been changed');

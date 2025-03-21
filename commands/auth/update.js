@@ -8,25 +8,23 @@ export const meta = {
         { key: 'id', desc: 'Identifier of the user(username)' },
         { key: 'name', desc: 'New username' },
         { key: 'password', desc: 'New password' },
-        { key: 'email', desc: 'New email' },
-    ],
+        { key: 'email', desc: 'New email' }
+    ]
 };
 
 export async function execute(context) {
     let user;
     let flags = context?.cli?.flags;
-    while(!user) {
+    while (!user) {
         // prompt for id
-        const id_result = await execute_flag_prompts(flags, [
-            { key: 'id', name: 'Identifier(name)', type: 'input', required: true },
-        ]);
+        const id_result = await execute_flag_prompts(flags, [{ key: 'id', name: 'Identifier(name)', type: 'input', required: true }]);
         flags = {};
         // load user from db
         const result_user = getUserByName(id_result.id);
         if (!result_user) {
             logger.error('User does not exist');
         }
-        if(result_user && result_user?.name === id_result.id) {
+        if (result_user && result_user?.name === id_result.id) {
             user = result_user;
         }
     }

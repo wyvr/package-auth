@@ -9,8 +9,8 @@ export const meta = {
         { key: 'name', desc: 'Username' },
         { key: 'password', desc: 'Password' },
         { key: 'email', desc: 'Email' },
-        { key: 'role', desc: 'Role' },
-    ],
+        { key: 'role', desc: 'Role' }
+    ]
 };
 
 export async function execute(context) {
@@ -23,7 +23,7 @@ export async function execute(context) {
 
     // add user to db
     const create_result = createUser(result);
-    
+
     if (!create_result) {
         logger.error('Failed to create user');
         return;
@@ -31,4 +31,3 @@ export async function execute(context) {
 
     logger.success('User created');
 }
-

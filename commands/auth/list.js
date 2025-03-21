@@ -4,7 +4,7 @@ import { filled_array } from 'wyvr/src/utils/validate.js';
 
 export const meta = {
     desc: 'List all users',
-    flags: [],
+    flags: []
 };
 
 export async function execute() {
@@ -14,7 +14,7 @@ export async function execute() {
         logger.error('Failed to list users');
         return;
     }
-    if(!filled_array(result)) {
+    if (!filled_array(result)) {
         logger.warning('No users found');
         return;
     }

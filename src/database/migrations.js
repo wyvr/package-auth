@@ -1,9 +1,5 @@
 import { collect_files, read } from 'wyvr/src/utils/file.js';
-import {
-    filled_array,
-    filled_string,
-    is_func,
-} from 'wyvr/src/utils/validate.js';
+import { filled_array, filled_string, is_func } from 'wyvr/src/utils/validate.js';
 import { Cwd } from 'wyvr/src/vars/cwd.js';
 import { FOLDER_GEN_SERVER } from 'wyvr/src/constants/folder.js';
 import { logger, get_error_message } from 'wyvr/universal.js';
@@ -31,8 +27,7 @@ export function getMigrationFiles(folder) {
         return [];
     }
     const target = Cwd.get(FOLDER_GEN_SERVER, folder);
-    const files = collect_files(target)
-        .filter((file) => file.endsWith('.js') || file.endsWith('.sql'));
+    const files = collect_files(target).filter((file) => file.endsWith('.js') || file.endsWith('.sql'));
     if (!filled_array(files)) {
         return [];
     }
@@ -89,7 +84,7 @@ export async function applyFiles(db, files, folder) {
                 }
                 case '.sql': {
                     const query = read(file);
-                    if(!query) {
+                    if (!query) {
                         continue;
                     }
                     run(db, query);
@@ -98,7 +93,7 @@ export async function applyFiles(db, files, folder) {
                 }
             }
             run(db, get_query('./query/migration_insert.sql'), {
-                file: file.replace(target, ''),
+                file: file.replace(target, '')
             });
         } catch (e) {
             logger.error(get_error_message(e, file, 'migration'));
@@ -113,8 +108,5 @@ export async function applyFiles(db, files, folder) {
 }
 
 function get_query(path) {
-    return readFileSync(
-        join(dirname(import.meta.url).replace('file:', ''), path),
-        'utf-8'
-    );
+    return readFileSync(join(dirname(import.meta.url).replace('file:', ''), path), 'utf-8');
 }

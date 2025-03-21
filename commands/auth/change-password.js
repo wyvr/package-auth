@@ -8,15 +8,13 @@ export const meta = {
     flags: [
         { key: 'name', desc: 'Username' },
         { key: 'password', desc: 'Password' }
-    ],
+    ]
 };
 
 export async function execute(context) {
     const user = await promptUser(context);
 
-    const password = await execute_flag_prompts(context?.cli?.flags, [
-        { key: 'password', name: 'Password', type: 'password', required: true },
-    ]);
+    const password = await execute_flag_prompts(context?.cli?.flags, [{ key: 'password', name: 'Password', type: 'password', required: true }]);
 
     // change password of user
     if (updatePasswordOfUser(user.name, password.password)) {

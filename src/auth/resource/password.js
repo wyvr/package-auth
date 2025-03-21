@@ -8,7 +8,7 @@ export function getPasswordHash(password, salt) {
         console.error(error);
         return null;
     }
-}  
+}
 
 export function createSalt() {
     return randomBytes(16).toString('hex');

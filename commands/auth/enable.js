@@ -4,9 +4,7 @@ import { logger } from 'wyvr/universal.js';
 
 export const meta = {
     desc: 'Enable a user',
-    flags: [
-        { key: 'name', desc: 'Username' }
-    ],
+    flags: [{ key: 'name', desc: 'Username' }]
 };
 
 export async function execute(context) {
