@@ -43,7 +43,7 @@ export function updateUserByName(name, data) {
         return false;
     }
     data.updated = getDate();
-    const fields = ['name', 'email', 'role', 'hash', 'salt', 'locked_until', 'active', 'updated'];
+    const fields = ['name', 'email', 'role', 'hash', 'salt', 'locked_until', 'active', 'updated', 'failed_logins'];
     const update_values = fields
         .map((key) => (key in data && data[key] !== undefined ? `${key} = :${key}` : undefined))
         .filter(Boolean)
@@ -71,7 +71,7 @@ export function deleteUserByName(name) {
     }
 
     deleteUserLogins(name);
-    
+
     const query = read(Cwd.get(FOLDER_GEN_SERVER, 'auth/query/delete_user_by_name.sql'));
     if (!query) {
         return false;

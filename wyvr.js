@@ -10,7 +10,9 @@ export default {
         }
     },
     auth: {
-        token_lifetime_minutes: 60 // 1h
+        token_lifetime_minutes: 60, // 1h
+        failed_login_max_attempts: 3,
+        failed_login_lock_duration_minutes: 5,
     },
     _secrets: {
         auth: {}

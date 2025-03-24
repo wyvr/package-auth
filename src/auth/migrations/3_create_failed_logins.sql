@@ -1,0 +1,1 @@
+ALTER TABLE [user] ADD  [failed_logins] INT NULL DEFAULT 0 ;

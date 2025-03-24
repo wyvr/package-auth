@@ -1,16 +1,23 @@
 import { getConnection } from '$src/auth/database';
-import { getUserByName, getSafeUserByName, deleteUserLogins } from '$src/auth/resource/user.js';
-import { getAll, run } from '$src/database/database.js';
+import { getUserByName, getSafeUserByName, deleteUserLogins, updateUserByName } from '$src/auth/resource/user.js';
+import { getAll, getDate, run } from '$src/database/database.js';
 import { TOKEN_LIFETIME_MINUTES } from '$src/auth/constants.js';
 import { get_config } from 'wyvr/cron.js';
 import { getPasswordHash } from '$src/auth/resource/password.js';
 
 export function login(name, password) {
     const user = getUserByName(name);
-    if (!user) {
+    if (!user || user.active === 0 || user.locked_until > new Date().getTime()) {
         return null;
     }
+    const failed_login_max_attempts = get_config('auth.failed_login_max_attempts', 3);
+    const failed_login_lock_duration_minutes = get_config('auth.failed_login_lock_duration_minutes', 3);
     if (user.hash !== getPasswordHash(password, user.salt)) {
+        updateUserByName(name, { failed_logins: user.failed_logins + 1 });
+        if (user.failed_logins >= failed_login_max_attempts) {
+            updateUserByName(name, { locked_until: getDate(new Date().getTime() + failed_login_lock_duration_minutes * 60 * 1000) });
+            return null;
+        }
         return null;
     }
     const token = createToken(user);
@@ -21,6 +28,8 @@ export function login(name, password) {
         const db = getConnection();
         deleteUserLogins(name);
         run(db, 'INSERT INTO login (name, token) VALUES ($name, $token);', { name, token });
+
+        updateUserByName(name, { failed_logins: 0 });
         return { token, user: getSafeUserByName(name) };
     } catch (error) {
         console.error(error);
