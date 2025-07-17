@@ -12,6 +12,9 @@ export function login(name, password) {
     }
     const failed_login_max_attempts = get_config('auth.failed_login_max_attempts', 3);
     const failed_login_lock_duration_minutes = get_config('auth.failed_login_lock_duration_minutes', 3);
+    if (isUserLocked(name)) {
+        return null;
+    }
     if (user.hash !== getPasswordHash(password, user.salt)) {
         updateUserByName(name, { failed_logins: user.failed_logins + 1 });
         if (user.failed_logins >= failed_login_max_attempts) {
@@ -108,4 +111,20 @@ export function createToken(user) {
         console.error(error);
         return null;
     }
+}
+
+/**
+ * Return whether the user is locked, undefined if the user does not exist
+ * @param {string} name
+ * @returns bool|undefined
+ */
+export function isUserLocked(name) {
+    const user = getUserByName(name);
+    if (!user) {
+        return undefined;
+    }
+    if (!user.locked_until || new Date(user.locked_until).getTime() > new Date().getTime()) {
+        return false;
+    }
+    return true;
 }
