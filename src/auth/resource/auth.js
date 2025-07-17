@@ -1,6 +1,6 @@
 import { getConnection } from '$src/auth/database';
 import { getUserByName, getSafeUserByName, deleteUserLogins, updateUserByName } from '$src/auth/resource/user.js';
-import { getAll, getDate, run } from '$src/database/database.js';
+import { getAll, getDate, getFirst, run } from '$src/database/database.js';
 import { TOKEN_LIFETIME_MINUTES } from '$src/auth/constants.js';
 import { get_config } from 'wyvr/cron.js';
 import { getPasswordHash } from '$src/auth/resource/password.js';
@@ -73,8 +73,8 @@ export function isTokenValid(name, token) {
     try {
         const db = getConnection();
         const minutes = get_config('auth.token_lifetime_minutes', TOKEN_LIFETIME_MINUTES);
-        const login = run(db, `SELECT token FROM login WHERE name = $name AND token = $token AND created > datetime('now', '-${minutes} minute');`, { name, token });
-        if (!login) {
+        const login = getFirst(db, `SELECT token FROM login WHERE name = $name AND token = $token AND created > datetime('now', '-${minutes} minute');`, { name, token });
+        if (!login?.token) {
             return false;
         }
         return true;
