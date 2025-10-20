@@ -28,8 +28,8 @@ export function login(name, password) {
         return null;
     }
     try {
-        const db = getConnection();
         deleteUserLogins(name);
+        const db = getConnection();
         run(db, 'INSERT INTO login (name, token) VALUES ($name, $token);', { name, token });
 
         updateUserByName(name, { failed_logins: 0 });
