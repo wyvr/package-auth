@@ -2,7 +2,7 @@ import { getConnection } from '$src/auth/database';
 import { getUserByName, getSafeUserByName, deleteUserLogins, updateUserByName } from '$src/auth/resource/user.js';
 import { getAll, getDate, getFirst, run } from '$src/database/database.js';
 import { TOKEN_LIFETIME_MINUTES } from '$src/auth/constants.js';
-import { get_config } from 'wyvr/cron.js';
+import { get_config } from 'wyvr/server';
 import { getPasswordHash } from '$src/auth/resource/password.js';
 
 export function login(name, password) {

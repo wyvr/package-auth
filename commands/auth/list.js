@@ -1,5 +1,5 @@
 import { getAllUsers } from '$src/auth/resource/user.js';
-import { logger } from 'wyvr/universal.js';
+import { logger } from 'wyvr/universal';
 import { filled_array } from 'wyvr/src/utils/validate.js';
 
 export const meta = {

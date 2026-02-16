@@ -1,6 +1,6 @@
 import { promptUser } from '$src/auth/commands/prompt_user.js';
 import { deleteUserLogins, updateUserByName } from '$src/auth/resource/user.js';
-import { logger } from 'wyvr/universal.js';
+import { logger } from 'wyvr/universal';
 
 export const meta = {
     desc: 'Disable a user',

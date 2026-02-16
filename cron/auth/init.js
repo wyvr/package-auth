@@ -1,5 +1,5 @@
 import { getConnection, getPath } from '$src/auth/database.js';
-import { Migrations } from 'wyvr/storage.js';
+import { Migrations } from 'wyvr/server';
 
 export default async function () {
     const db = getConnection();

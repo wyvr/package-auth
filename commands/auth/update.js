@@ -1,6 +1,6 @@
 import { getUserByName, updateUserByName } from '$src/auth/resource/user.js';
-import { execute_flag_prompts } from 'wyvr/commands.js';
-import { logger } from 'wyvr/universal.js';
+import { execute_flag_prompts } from 'wyvr/commands';
+import { logger } from 'wyvr/universal';
 
 export const meta = {
     desc: 'Create a new user',

@@ -1,8 +1,8 @@
 import { promptUser } from '$src/auth/commands/prompt_user.js';
 import { getRolesAsPrompt } from '$src/auth/resource/role.js';
 import { updateUserByName } from '$src/auth/resource/user.js';
-import { execute_flag_prompts, prompt_option } from 'wyvr/commands.js';
-import { logger } from 'wyvr/universal.js';
+import { execute_flag_prompts, prompt_option } from 'wyvr/commands';
+import { logger } from 'wyvr/universal';
 
 export const meta = {
     desc: 'Change role of user',

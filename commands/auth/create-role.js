@@ -1,6 +1,6 @@
 import { createRole } from '$src/auth/resource/role.js';
-import { execute_flag_prompts } from 'wyvr/commands.js';
-import { logger } from 'wyvr/universal.js';
+import { execute_flag_prompts } from 'wyvr/commands';
+import { logger } from 'wyvr/universal';
 
 export const meta = {
     desc: 'Create new role',

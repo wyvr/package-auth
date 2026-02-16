@@ -1,7 +1,7 @@
 import { getConnection } from '$src/auth/database.js';
-import { getAll, run } from '$src/database/database.js';
-import { get_config } from 'wyvr/cron.js';
-import { logger } from 'wyvr/universal.js';
+import { run } from '$src/database/database.js';
+import { get_config } from 'wyvr/server';
+import { logger } from 'wyvr/universal';
 import { TOKEN_LIFETIME_MINUTES } from '$src/auth/constants.js';
 
 export default async function () {
