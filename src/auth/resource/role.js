@@ -1,4 +1,4 @@
-import { prompt_option } from 'wyvr/commands';
+import { prompt_option } from 'wyvr/commands.js';
 
 export function getRoles() {}
 export function getRolesAsPrompt() {
