@@ -1,6 +1,6 @@
 import { getRolesAsPrompt } from '$src/auth/resource/role.js';
 import { createUser } from '$src/auth/resource/user.js';
-import { execute_flag_prompts } from 'wyvr/commands.js';
+import { execute_flag_prompts } from 'wyvr/cli';
 import { logger } from 'wyvr/universal';
 
 export const meta = {
